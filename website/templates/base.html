@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacie Abdelkrim</title>
+    <link rel="shortcut icon" href="../static/img/svg/logo.svg" type="image/x-icon">
+    <link rel="stylesheet" href="../static/css/style.min.css">
+    <style>
+
+  </style>
+</head>
+
+<body>
+<div class="layer"></div>
+<!-- ! Body -->
+<div class="page-flex">
+  <!-- ! Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-start">
+        <div class="sidebar-head">
+            <a href="/" class="logo-wrapper" title="Home">
+                <span class="sr-only">Home</span>
+                <span class="icon logo" aria-hidden="true"></span>
+                <div class="logo-text">
+                    <span class="logo-title">Pharmacie</span>
+                    <span class="logo-subtitle">Abdelkrim</span>
+                </div>
+            </a>
+        </div>
+        <div class="sidebar-body">
+            <ul class="sidebar-body-menu">
+                <li>
+                    <a class="show-cat-btn">
+                        <span class="icon document" aria-hidden="true"></span>Pharmacetique
+                        <span class="category__btn transparent-btn" title="Open list">
+                            <span class="sr-only">Open list</span>
+                            <span class="icon arrow-down" aria-hidden="true"></span>
+                        </span>
+                    </a>
+                    <ul class="cat-sub-menu">
+                        <li><a href="/" class="{{ 'active' if active_page == 'home' else '' }}">A commander</a></li>
+                        <li><a href="/commande"  class="{{ 'active' if active_page == 'commande' else '' }}">Panier</a></li>
+                        <li><a href="/archive" class="{{ 'active' if active_page == 'archive' else '' }}">Archives</a></li>
+                    </ul>
+                </li>
+                <li>
+                  <a class="show-cat-btn" href="##" >
+                      <span class="icon folder" aria-hidden="true"></span>ParaPharmacetique
+                      <span class="category__btn transparent-btn" title="Open list">
+                          <span class="sr-only">Open list</span>
+                          <span class="icon arrow-down" aria-hidden="true"></span>
+                      </span>
+                  </a>
+                  <ul class="cat-sub-menu">
+                        <li><a href="/article" class="{{ 'active' if active_page == 'article' else '' }}">A commander</a></li>
+                        <li><a href="/commande_article" class="{{ 'active' if active_page == 'commande_article' else '' }}">Panier</a></li>
+                        <li><a href="/archive_article" class="{{ 'active' if active_page == 'archive_article' else '' }}">Archives</a></li>
+                  </ul>
+              </li>
+{#              <span class="system-menu__title">Autres</span>#}
+                <li>
+                  <a class="show-cat-btn" href="##" >
+                      <span class="icon paper" aria-hidden="true"></span>Autres
+                      <span class="category__btn transparent-btn" title="Open list">
+                          <span class="sr-only">Open list</span>
+                          <span class="icon arrow-down" aria-hidden="true"></span>
+                      </span>
+                  </a>
+                  <ul class="cat-sub-menu">
+                        <li><a href="/gardes" class="{{ 'active' if active_page == 'gardes' else '' }}">Gardes</a></li>
+                        <li><a href="/update" class="{{ 'active' if active_page == 'update' else '' }}">Update</a></li>
+                  </ul>
+
+              </li>
+            </ul>
+        </div>
+    </div>
+  </aside>
+<div class="main-wrapper">
+{% block nav %}{% endblock %}
+
+{% block content %}{% endblock %}
+    <footer class="footer">
+      <div class="container footer--flex">
+        <div class="footer-start">
+          <p>2024 © BABIBORIS - </p>
+        </div>
+      </div>
+    </footer>
+</div>
+</div>
+<script>
+document.getElementById('RechercheFiltrer').addEventListener('keyup', function() {
+  let searchQuery = this.value.toLowerCase();
+  let tableRows = document.querySelectorAll('.posts-table tbody tr');
+
+  tableRows.forEach(row => {
+    let cells = Array.from(row.querySelectorAll('td'));
+    let rowContainsQuery = cells.some(cell => cell.textContent.toLowerCase().includes(searchQuery));
+    row.style.display = rowContainsQuery ? "" : "none";
+  });
+});
+</script>
+<!-- Chart library -->
+<script src="../static/plugins/chart.min.js"></script>
+<!-- Icons library -->
+<script src="../static/plugins/feather.min.js"></script>
+<!-- Custom scripts -->
+<script src="../static/js/script.js"></script>
+    <script>
+document.getElementById('select-all').addEventListener('change', function(e) {
+    var checkboxes = document.getElementsByClassName('select-item');
+    for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = e.target.checked;
+    }
+});
+    </script>
+</body>
+
+</html>

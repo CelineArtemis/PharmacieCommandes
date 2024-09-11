@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block nav %}
+<nav class="main-nav--bg">
+<div class="container main-nav">
+  <div class="main-nav-start">
+      <form action="/add_demande_article" method="post" class="d-flex">
+        <div class="search-wrapper">
+          <i data-feather="search" aria-hidden="true"></i>
+          <input type="search" name="article" list="articles" id="search-article" placeholder="Nom de l'article..." required autofocus>
+            <datalist id="articles"></datalist>
+        </div>
+        <div class="search-wrapper">
+          <input class="form-control me-2" type="number" id="quantity_needed_article" min="1" placeholder="Quantité" name ="quantity_needed_article" style="width: 150px; margin-top: 10px;" required>
+          <button class="button-12" type="submit">Ajouter</button>
+        </div>
+      </form>
+  </div>
+</div>
+</nav>
+{% endblock %}
+{% block content %}
+    <main class="main users chart-page" id="skip-target">
+      <div class="container">
+        <h2 class="main-title">Vos demandes d'articles :</h2>
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="users-table table-wrapper">
+            <div class="search-wrapper" style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px">
+              <input type="text" id="RechercheFiltrer" placeholder="Que voulez-vous chercher ?">
+            </div>
+            <div class="users-table table-wrapper">
+              <table class="posts-table">
+                <thead>
+                  <tr class="users-table-info">
+                    <th style="padding-left: 10px;">Date</th>
+                    <th>Nom de l'article</th>
+                    <th>Quantité demandée</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for demande_article in demandes %}
+                  <tr style="color : white">
+                    <td>{{ demande_article.date_demande.replace(tzinfo=pytz.utc).astimezone(algeria_tz).strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                    <td>{{ demande_article.article.nom }}</td>
+                    <td>{{ demande_article.quantite_demandee }}</td>
+                    <td>
+                      <span class="p-relative">
+                        <button class="dropdown-btn transparent-btn" type="button" title="More info">
+                          <div class="sr-only">More info</div>
+                          <i data-feather="more-horizontal" aria-hidden="true"></i>
+                        </button>
+                        <ul class="users-item-dropdown dropdown">
+                          <li><a href="{{ url_for('main.delete_demande_article', demande_article_id=demande_article.id) }}">Supprimer</a></li>
+                        </ul>
+                      </span>
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+{% endblock %}

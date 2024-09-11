@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+    <main class="main users chart-page" id="skip-target">
+      <div class="container">
+        <h2 class="main-title">Listes des pharmacies de garde : </h2>
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="users-table table-wrapper">
+            <div class="users-table table-wrapper">
+              <table class="posts-table">
+                <thead>
+                  <tr class="users-table-info">
+                    <th style="padding-left: 10px;">Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for garde in gardes %}
+                      <tr style="color : white">
+                        <td>{{ garde }}</td>
+                        <td>
+                            <a href="{{ url_for('main.download_garde', date=garde) }}">
+                                <img src="{{ url_for('static', filename='img/svg/dl.svg') }}" alt="Télécharger">
+                            </a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+{% endblock %}

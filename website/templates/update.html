@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+    <main class="main users chart-page" id="skip-target">
+      <div class="container">
+        <h2 class="main-title">Upload un fichier .mdb (Access 2003) </h2>
+        <div class="row">
+          <div class="col-lg-12">
+            <form action="{{ url_for('main.upload') }}" method="POST" enctype="multipart/form-data">
+              {{ form.hidden_tag() }}
+              {{ form.file.label }} {{ form.file() }}
+              <input type="submit" value="Upload">
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+{% endblock %}

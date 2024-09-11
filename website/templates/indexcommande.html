@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block nav %}
+<nav class="main-nav--bg">
+<div class="container main-nav">
+  <div class="main-nav-start">
+      <form action="/add_demande" method="post" class="d-flex">
+        <div class="search-wrapper">
+          <i data-feather="search" aria-hidden="true"></i>
+          <input type="search" name="medicament" list="medicaments" id="medicament" placeholder="Nom du médicament..." required autofocus>
+            <datalist id="medicaments"></datalist>
+        </div>
+        <div class="search-wrapper">
+          <input class="form-control me-2" type="number" id="quantity_needed" min="1" placeholder="Quantité" name ="quantity_needed" style="width: 150px; margin-top: 10px;" required>
+          <button class="button-12" type="submit">Ajouter</button>
+        </div>
+      </form>
+  </div>
+</div>
+</nav>
+{% endblock %}
+{% block content %}
+    <main class="main users chart-page" id="skip-target">
+      <div class="container">
+        <h2 class="main-title">Les médicaments à commander :</h2>
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="users-table table-wrapper">
+            <div class="search-wrapper" style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px">
+              <input type="text" id="RechercheFiltrer" placeholder="Que voulez-vous chercher ?">
+            </div>
+            <div class="users-table table-wrapper">
+            <div class="search-wrapper" style="display: flex; justify-content: right; align-items: center; padding-bottom: 10px">
+              <button class="button-12" onclick="archiverSelectionMedicaments()" >Archiver la sélection</button>
+            </div>
+              <table class="posts-table">
+                <thead>
+                  <tr class="users-table-info">
+                    <th style="padding-left: 10px;">Date</th>
+                    <th>Nom du médicament</th>
+                    <th>Quantité demandée</th>
+                    <th>Fournisseur</th>
+                    <th>Quantité commandée</th>
+                    <th>Observation</th>
+                    <th>Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for commande in commandes|sort(attribute='demande.date_demande', reverse=True) %}
+                  <tr style="color : white">
+                    <td>{{ commande.demande.date_demande.replace(tzinfo=pytz.utc).astimezone(algeria_tz).strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                    <td>
+                        <p>{{ commande.demande.medicament.nom }}</p>
+                    </td>
+                    <td>{{ commande.demande.quantite_demandee }}</td>
+                    <td>
+                        <select name="fournisseur" class="form-select fournisseur" id="fournisseur-{{ commande.id }}" >
+                            <option value="" selected></option>
+                            <option value="PHARMA INVEST" {% if commande.fournisseur == "PHARMA INVEST" %}selected{% endif %}>PHARMA INVEST</option>
+                            <option value="BIOPURE" {% if commande.fournisseur == "BIOPURE" %}selected{% endif %}>BIOPURE</option>
+                            <option value="SOMEPHARM" {% if commande.fournisseur == "SOMEPHARM" %}selected{% endif %}>SOMEPHARM</option>
+                            <option value="BCD PHARMA" {% if commande.fournisseur == "BCD PHARMA" %}selected{% endif %}>BCD PHARMA</option>
+                            <option value="AZ PHARMA" {% if commande.fournisseur == "AZ PHARMA" %}selected{% endif %}>AZ PHARMA</option>
+                            <option value="MANQUANT" {% if commande.fournisseur == "MANQUANT" %}selected{% endif %}>MANQUANT</option>
+                        </select>
+                    </td>
+                    <td class="d-flex justify-content-center">
+                        <div class="search-wrapper">
+                            <input type="number" name="quantite_commandee" min="0" value="{{ commande.quantite_commandee }}" class="form-control quantite-commandee" id="quantite-{{ commande.id }}" style="width: 100px;">
+                        </div>
+                    </td>
+                    <td>
+                    <div class="search-wrapper">
+                        <input type="text" name="observation" value="{{ commande.observation|default('') }}" class="form-control observation" id="observation-{{ commande.id }}">
+                    </div>
+                    </td>
+                    <td>
+                        <div class="switch">
+                          <input type="checkbox" id="chk-{{ commande.id }}" name="statut" onclick="archiveCommandeMedicament({{ commande.id }})">
+                          <label for="chk-{{ commande.id }}" class="slider"></label>
+                        </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+document.addEventListener("DOMContentLoaded", function() {
+  const fournisseurInputs = document.querySelectorAll(".fournisseur");
+  const quantiteCommandeeInputs = document.querySelectorAll(".quantite-commandee");
+  const observationInputs = document.querySelectorAll(".observation");
+
+  fournisseurInputs.forEach((fournisseurInput, index) => {
+    fournisseurInput.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        quantiteCommandeeInputs[index].focus();
+      }
+    });
+  });
+
+  quantiteCommandeeInputs.forEach((quantiteCommandeeInput, index) => {
+    quantiteCommandeeInput.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        observationInputs[index].focus();
+      }
+    });
+  });
+
+  observationInputs.forEach((observationInput, index) => {
+    observationInput.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        // Récupérer l'ID de l'article à partir de l'ID de l'input
+        const commandeId = observationInput.id.split('-')[1];
+        archiveCommandeMedicament(commandeId);
+        const fournisseurNextRow = observationInput.closest("tr").nextElementSibling.querySelector(".fournisseur");
+        const switchButton = document.getElementById('chk-' + commandeId);
+        if (fournisseurNextRow) {
+          fournisseurNextRow.focus();
+          // Simuler un clic sur l'élément pour ouvrir la liste déroulante
+          let event = new MouseEvent('mousedown', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+          });
+          fournisseurNextRow.dispatchEvent(event);
+        }
+        // Simuler un clic sur le bouton pour changer son état
+        if (switchButton) {
+          switchButton.click();
+        }
+      }
+    });
+  });
+});
+    </script>
+
+{% endblock %}

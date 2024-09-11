@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+    <main class="main users chart-page" id="skip-target">
+      <div class="container">
+        <h2 class="main-title">Archives de vos commandes de médicaments :</h2>
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="users-table table-wrapper">
+            <div class="search-wrapper" style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px">
+              <input type="text" id="RechercheFiltrer" placeholder="Que voulez-vous chercher ?">
+            </div>
+            <div class="users-table table-wrapper">
+            <form action="{{ url_for('main.delete_archive') }}" method="post">
+                <div class="search-wrapper" style="display: flex; justify-content: left; align-items: center; padding-bottom: 10px">
+                  <button class="button-12" type="submit">Supprimer la sélection</button>
+                </div>
+                <table class="posts-table">
+                <thead>
+                  <tr class="users-table-info">
+                    <th style="padding-left: 21px;"><input type="checkbox" id="select-all"></th>
+                    <th style="padding-left: 10px;">Date</th>
+                    <th>Nom du médicament</th>
+                    <th>Quantité </th>
+                    <th>Fournisseur</th>
+                    <th>Observation</th>
+                    <th>Demander le</th>
+                    <th>Quantité demander</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for archive in archives|sort(attribute='date_archive', reverse=True) %}
+                  <tr style="color : white">
+                    <td>
+                      <input type="checkbox" name="archive_ids" value="{{ archive.id }}" class="select-item">
+                    </td>
+                    <td>{{ archive.date_archive.replace(tzinfo=pytz.utc).astimezone(algeria_tz).strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                    <td>{{ archive.medicament.nom }}</td>
+                    <td>{{ archive.quantite_commandee_archive }}</td>
+                    <td>{{ archive.fournisseur_archive }}</td>
+                    <td>{{ archive.observation }}</td>
+                    <td>{{ archive.date_demande_archive.replace(tzinfo=pytz.utc).astimezone(algeria_tz).strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                    <td>{{ archive.quantite_demandee_archive }}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+             </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+{% endblock %}
